@@ -1,0 +1,5 @@
+{
+  "name": "Exploratory Data Analysis (EDA) Studio",
+  "description": "Interactive exploratory data analysis studio with data cleaning, statistical analysis, visualizations, outlier detection, feature engineering, and report generation.",
+  "requestFramePermissions": []
+}
