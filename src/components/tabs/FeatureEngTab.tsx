@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Binary,
   Cpu,
@@ -33,6 +33,14 @@ export const FeatureEngTab: React.FC<FeatureEngTabProps> = ({
   onCreateRatio,
   engineeredCols,
 }) => {
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  const revealPreview = () => {
+    requestAnimationFrame(() => {
+      previewRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+    });
+  };
+
   // Encoding state
   const [catToEncode, setCatToEncode] = useState(categoricalCols[0] || "");
   const [encodeMethod, setEncodeMethod] = useState<"onehot" | "label">("onehot");
@@ -102,7 +110,10 @@ export const FeatureEngTab: React.FC<FeatureEngTabProps> = ({
 
               <button
                 type="button"
-                onClick={() => onEncodeCat(catToEncode, encodeMethod)}
+                onClick={() => {
+                  onEncodeCat(catToEncode, encodeMethod);
+                  revealPreview();
+                }}
                 className="w-full mt-2 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium shadow-md shadow-blue-900/20 transition-all"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -148,7 +159,10 @@ export const FeatureEngTab: React.FC<FeatureEngTabProps> = ({
 
               <button
                 type="button"
-                onClick={() => onScaleNum(numToScale, scaleMethod)}
+                onClick={() => {
+                  onScaleNum(numToScale, scaleMethod);
+                  revealPreview();
+                }}
                 className="w-full mt-2 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium shadow-md shadow-blue-900/20 transition-all"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -185,7 +199,10 @@ export const FeatureEngTab: React.FC<FeatureEngTabProps> = ({
 
               <button
                 type="button"
-                onClick={() => onLogTransform(numToLog)}
+                onClick={() => {
+                  onLogTransform(numToLog);
+                  revealPreview();
+                }}
                 className="w-full mt-2 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium shadow-md shadow-blue-900/20 transition-all"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -245,7 +262,10 @@ export const FeatureEngTab: React.FC<FeatureEngTabProps> = ({
 
               <button
                 type="button"
-                onClick={() => onCreateRatio(ratioColA, ratioColB, ratioName)}
+                onClick={() => {
+                  onCreateRatio(ratioColA, ratioColB, ratioName);
+                  revealPreview();
+                }}
                 className="w-full mt-2 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium shadow-md shadow-blue-900/20 transition-all"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -257,7 +277,7 @@ export const FeatureEngTab: React.FC<FeatureEngTabProps> = ({
       </div>
 
       {/* Engineered Columns Live Preview */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+      <div ref={previewRef} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 border-b border-slate-800 flex items-center justify-between">
           <div>
             <h4 className="text-xs font-semibold text-white uppercase tracking-wider">

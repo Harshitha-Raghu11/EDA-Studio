@@ -3,9 +3,7 @@ import {
   Activity,
   AlertTriangle,
   BarChart3,
-  BookOpen,
   CheckCircle2,
-  Code2,
   Cpu,
   Database,
   Download,
@@ -29,6 +27,7 @@ import {
   Wand2,
 } from "lucide-react";
 import { Header } from "./components/Header";
+import { DeveloperDashboard } from "./components/DeveloperDashboard";
 import { OverviewTab } from "./components/tabs/OverviewTab";
 import { CleaningTab } from "./components/tabs/CleaningTab";
 import { StatisticsTab } from "./components/tabs/StatisticsTab";
@@ -38,8 +37,6 @@ import { OutlierTab } from "./components/tabs/OutlierTab";
 import { FeatureEngTab } from "./components/tabs/FeatureEngTab";
 import { InsightsTab } from "./components/tabs/InsightsTab";
 import { ReportExportTab } from "./components/tabs/ReportExportTab";
-import { CodeViewer } from "./components/CodeViewer";
-import { NotebookViewer } from "./components/NotebookViewer";
 import { ReportViewer } from "./components/ReportViewer";
 import { SAMPLE_DATASETS } from "./data/sampleDatasets";
 import {
@@ -71,8 +68,21 @@ import {
 } from "./utils/edaEngine";
 
 export default function App() {
-  // Active view: Interactive studio vs Python Code vs Notebook vs Report
-  const [activeView, setActiveView] = useState<"studio" | "code" | "notebook" | "report">("studio");
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "light";
+    const saved = window.localStorage.getItem("data-lens-theme");
+    if (saved === "light" || saved === "dark") return saved;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.style.colorScheme = theme;
+    window.localStorage.setItem("data-lens-theme", theme);
+  }, [theme]);
+
+  // Active view: Interactive studio vs report
+  const [activeView, setActiveView] = useState<"studio" | "report">("studio");
   const [activeStudioTab, setActiveStudioTab] = useState<
     "overview" | "cleaning" | "statistics" | "visualization" | "correlation" | "outliers" | "feature_eng" | "insights" | "report_export"
   >("overview");
@@ -426,18 +436,6 @@ export default function App() {
     }
   };
 
-  const studioTabs = [
-    { id: "overview", label: "Overview & Schema", icon: Table },
-    { id: "cleaning", label: "Data Cleaning", icon: Wand2, badge: metadata.totalNullCells > 0 ? `${metadata.totalNullCells} nulls` : undefined },
-    { id: "statistics", label: "Descriptive Stats", icon: Activity },
-    { id: "visualization", label: "Visualizations", icon: BarChart3 },
-    { id: "correlation", label: "Correlation Matrix", icon: Network },
-    { id: "outliers", label: "Outlier Audit", icon: ShieldAlert, badge: outlierMetrics.some((m) => m.iqrCount > 0) ? "Anomalies" : undefined },
-    { id: "feature_eng", label: "Feature Engineering", icon: Cpu },
-    { id: "insights", label: "Insights & Analysis", icon: Sparkles },
-    { id: "report_export", label: "Report & Export", icon: FileText },
-  ];
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-blue-500/30 selection:text-blue-200">
       {/* Universal Top Header */}
@@ -448,45 +446,19 @@ export default function App() {
         onFileUpload={handleFileUpload}
         activeView={activeView}
         onSelectView={setActiveView}
+        activeStudioTab={activeStudioTab}
+        onSelectStudioTab={setActiveStudioTab}
         onDownloadZip={handleDownloadZip}
+        theme={theme}
+        onToggleTheme={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
       />
 
       {/* Main Body Stage */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 overflow-x-hidden">
-        {activeView === "code" && <CodeViewer />}
-        {activeView === "notebook" && <NotebookViewer />}
         {activeView === "report" && <ReportViewer onDownloadReport={handleDownloadReport} />}
 
         {activeView === "studio" && (
           <div className="space-y-6">
-            {/* Studio Secondary Tab Bar */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-1 shadow-sm flex items-center gap-1 overflow-x-auto">
-              {studioTabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeStudioTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveStudioTab(tab.id as any)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
-                      isActive
-                        ? "bg-blue-600 text-white font-semibold shadow-sm shadow-blue-900/20"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
-                    }`}
-                  >
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-400"}`} />
-                    <span>{tab.label}</span>
-                    {tab.badge && !isActive && (
-                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                        {tab.badge}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
             {/* Global Column Filter Status Banner if columns are hidden */}
             {hiddenColumns.length > 0 && (
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -618,6 +590,14 @@ export default function App() {
                 onDownloadZip={handleDownloadZip}
               />
             )}
+
+            <DeveloperDashboard
+              metadata={metadata}
+              parametricStats={parametricStats}
+              onNavigateTab={(tab) => setActiveStudioTab(tab as any)}
+              onNavigateView={(view) => setActiveView(view)}
+              datasetName={currentDataset.name}
+            />
           </div>
         )}
       </main>

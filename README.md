@@ -25,6 +25,7 @@ Dataset problems are often discovered late, after analysis or modelling has alre
 - View the Python modules, notebook, and technical report from the application.
 - Export cleaned data, reports, and a project bundle.
 - Optionally use a configured language model for additional insight summaries and dataset questions. The core EDA workflow works without it.
+- Experience the interface as a premium, light-first analytics SaaS dashboard with polished cards, consistent theming, and crisp KPI surfaces.
 
 ## Technology Stack
 
@@ -113,6 +114,18 @@ The server serves the built frontend and API from the same port.
 4. Explore statistics, visualisations, correlations, outliers, and engineered features.
 5. Use the Insights tab for evidence-based summaries and optional dataset questions.
 6. Export cleaned data, reports, or the complete project bundle.
+
+## Netlify Deployment
+
+This app is ready for static hosting on Netlify using the included `netlify.toml` configuration.
+
+```bash
+npm install
+npm run build
+npx netlify deploy --prod --dir=dist
+```
+
+The project expects a static SPA redirect to `index.html`, which is already configured in `netlify.toml`.
 
 The Python modules can also be used independently. For example:
 

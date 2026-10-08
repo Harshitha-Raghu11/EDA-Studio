@@ -1,16 +1,10 @@
 import React from "react";
 import {
   Activity,
-  Award,
   BarChart3,
-  BookOpen,
   CheckCircle2,
-  Code2,
-  Compass,
   Cpu,
   ExternalLink,
-  FileCode,
-  FileSpreadsheet,
   FileText,
   Github,
   Globe,
@@ -21,7 +15,6 @@ import {
   Sparkles,
   Table,
   Terminal,
-  User,
   Wand2,
   Zap,
 } from "lucide-react";
@@ -31,7 +24,7 @@ interface DeveloperDashboardProps {
   metadata: DatasetMetadata;
   parametricStats: ParametricStat[];
   onNavigateTab: (tab: string) => void;
-  onNavigateView: (view: "studio" | "code" | "notebook" | "report") => void;
+  onNavigateView: (view: "studio" | "report") => void;
   datasetName: string;
 }
 
@@ -129,26 +122,6 @@ export const DeveloperDashboard: React.FC<DeveloperDashboardProps> = ({
       features: ["Executive Summary Synthesizer", "Distribution Skew Warnings", "Strategic Action Playbooks", "Interactive Dataset Q&A Engine"],
       tabAction: "insights",
       viewAction: "studio" as const,
-    },
-    {
-      title: "Python Source Modules (`src/`)",
-      category: "Modular Architecture",
-      icon: Code2,
-      color: "from-brand to-teal",
-      desc: "Complete, production-tested Python source modules matching PEP 8 standards for loading, cleaning, statistics, and reporting.",
-      features: ["load_data.py & cleaning.py", "statistics.py & correlation.py", "outliers.py & feature_engineering.py", "visualization.py & report.py"],
-      tabAction: "overview",
-      viewAction: "code" as const,
-    },
-    {
-      title: "Interactive Jupyter Notebook (.ipynb)",
-      category: "Executable Pipeline",
-      icon: BookOpen,
-      color: "from-brand-2 to-brand",
-      desc: "Annotated 7-step notebook walkthrough with one-click full Python code copying and direct .ipynb notebook file download.",
-      features: ["Step-by-Step Executed Cells", "Real Input/Output Streams", "Direct .ipynb File Generator", "Zero-Dependency Python Code Export"],
-      tabAction: "overview",
-      viewAction: "notebook" as const,
     },
     {
       title: "Executive Technical Report",
@@ -337,6 +310,7 @@ export const DeveloperDashboard: React.FC<DeveloperDashboardProps> = ({
                     if (item.viewAction === "studio") {
                       onNavigateTab(item.tabAction);
                     }
+                    window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#F1F5F9] hover:bg-[#2563EB] text-[#172033] hover:text-white border border-[#E2E8F0] hover:border-transparent text-xs font-semibold transition-all cursor-pointer shadow-2xs"
                 >
