@@ -191,7 +191,7 @@ export const DataQualityIndex: React.FC<DataQualityIndexProps> = ({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-light text-white tracking-tight">
+              <span className="text-3xl font-light text-[var(--text)] tracking-tight">
                 {qualityStats.overallScore}
               </span>
               <span className="text-[10px] text-slate-400 uppercase font-semibold">
